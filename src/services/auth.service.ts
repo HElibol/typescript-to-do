@@ -3,9 +3,9 @@ import UserRepositroy from '../repositories/user.repository';
 import { IUser } from '../models/user.model';
 
 class UserService {
-    public async register(username: string, password: string): Promise<IUser> {
+    public async register(username: string, password: string, email: string): Promise<IUser> {
       const hashedPassword = await bcrypt.hash(password, 10);
-      const newUser: IUser = { username, password: hashedPassword } as IUser;
+      const newUser: IUser = { username, password: hashedPassword, email } as IUser;
       return await UserRepositroy.createUser(newUser);
     }
   

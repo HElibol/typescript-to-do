@@ -1,23 +1,27 @@
 import mongoose, {Schema, Document} from "mongoose";
 
-export interface IUser extends Document{
-    username: string,
-    email: string,
-    password: string
+export interface ITask extends Document{
+    title: string;
+    complated?: boolean;
+    user: string;
 }
 
-const UserSchema: Schema = new Schema({
-    username: {
+const TaskSchema: Schema = new Schema({
+    title: {
       type: String,
       required: true,
       unique: true,
     },
-    password: {
-      type: String,
-      required: true,
+    complated: {
+      type: Boolean,
+      default: false
     },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User' 
+    }
 });
   
-const UserModel = mongoose.model<IUser>('User', UserSchema);
+const TaskModel = mongoose.model<ITask>('Task', TaskSchema);
 
-export default UserModel;
+export default TaskModel;
