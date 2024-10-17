@@ -36,10 +36,10 @@ class TaskController {
         try{
             const taskId = req.params.id
             const {title, complated} = req.body;
-            const userId: string = "6703a6c50d8a58a57a872126";
+            const userId = req.user
             const taskData: ITask = {
                 title,
-                user: userId, // bu gereksiz buna bir çözüm bul
+                user: userId, 
                 complated
             } as ITask;
 
