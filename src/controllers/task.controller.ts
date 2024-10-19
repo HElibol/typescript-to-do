@@ -36,7 +36,7 @@ class TaskController {
         try{
             const taskId = req.params.id
             const {title, complated} = req.body;
-            const userId = req.user
+            const userId = req.user;
             const taskData: ITask = {
                 title,
                 user: userId, 

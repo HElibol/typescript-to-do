@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import AuthService  from '../services/auth.service';
 import RefreshToken from '../models/token.model';
+import jwt from "jsonwebtoken";
+
 
 class UserController {
     public async register(req: Request, res: Response):Promise<void> {
@@ -13,7 +15,7 @@ class UserController {
         }
     }
 
-    public async login(req: Request, res: Response):Promise<void> {
+    public async login(req: Request, res: Response):Promise<void> { 
         const { username, password } = req.body;
         try {
             const isValid = await AuthService.validateUser(username, password);
@@ -31,9 +33,25 @@ class UserController {
             res.status(500).json({ message: 'Login failed', error });
         }
     } 
-    
-    public async refreshAccessToken(req: Request, res: Response){
-        const accessToken = req;
+            
+    public async refreshAccessToken(req: Request, res: Response):Promise<void>{
+        const refreshToken = req.body.refreshToken;
+
+        if (!refreshToken) {
+            res.status(400).json({ message: 'Refresh token is required' });
+        }
+
+        try {
+            const newAccessToken = await AuthService.refreshAccessTokenService(refreshToken);
+
+            if (!newAccessToken) {
+                res.status(403).json({ message: 'Invalid or expired refresh token' });
+            }
+
+            res.json({ accessToken: newAccessToken });
+        } catch (error) {
+            res.status(500).json({ message: 'Server error', error });
+        }
     }
 }
 
