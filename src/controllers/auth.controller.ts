@@ -6,9 +6,9 @@ import jwt from "jsonwebtoken";
 
 class UserController {
     public async register(req: Request, res: Response):Promise<void> {
-        const { username, password, email } = req.body;
+        const { username, password } = req.body;
         try {
-            const newUser = await AuthService.register(username, password, email);
+            const newUser = await AuthService.register(username, password);
             res.status(201).json(newUser);
         } catch (error) {
             res.status(500).json({ message: 'User registration failed', error });

@@ -1,13 +1,11 @@
-import bcrypt from 'bcrypt';
 import UserModel, {IUser} from '../models/user.model';
 import RefreshTokenModel, {IRefreshToken} from '../models/token.model';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.utils';
 import jwt from "jsonwebtoken";
 
 class AuthService  {
-    public async register(username: string, password: string, email: string): Promise<IUser> {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const newUser: IUser = { username, password: hashedPassword, email } as IUser;
+    public async register(username: string, password: string): Promise<IUser> {
+      const newUser: IUser = { username, password } as IUser;
       const user = new UserModel(newUser);
       return await user.save();
     }
@@ -16,7 +14,10 @@ class AuthService  {
         const user = await UserModel.findOne({ username });
 
         if(!user) return false;
-        
+
+        const isPasswordValid = await user.comparePassword(password);
+
+        if(!isPasswordValid) return false;
         
         const refreshToken = generateRefreshToken(user._id);
         const accessToken = generateAccessToken(user._id);
