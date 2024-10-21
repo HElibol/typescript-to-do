@@ -15,16 +15,26 @@ class AuthService  {
 
         if(!user) return false;
 
+        const userId = user._id    
+
         const isPasswordValid = await user.comparePassword(password);
 
         if(!isPasswordValid) return false;
+
+        const refreshTokenRecord = await RefreshTokenModel.findOne({user: userId})
         
+        // bu mantıkla bir cihazda çalışır başka yerde giriş varsa yeni acces token alamaz
+        // postman ile sürekli giriş spamlanabilir(Rate limiter eklendi);
+        if(refreshTokenRecord){
+            await RefreshTokenModel.deleteOne({ _id: refreshTokenRecord._id });
+        }
+
         const refreshToken = generateRefreshToken(user._id);
         const accessToken = generateAccessToken(user._id);
 
         const expiresAt = new Date();
         expiresAt.setDate(expiresAt.getDate() + 7); 
-        const userId = user._id    
+        
         const refreshTokenM = new RefreshTokenModel({
             token: refreshToken, 
             user: userId,
@@ -42,11 +52,11 @@ class AuthService  {
             if (!savedToken) {
                 return null;
             }
-
             if (savedToken.expiresAt < new Date()) {
+                await savedToken.deleteOne({ _id: savedToken._id });
                 return null;
             }
-
+           
             return new Promise((resolve, reject) => {
                 jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!, (err: any, decoded: any) => {
                     if (err) {

@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import AuthService  from '../services/auth.service';
-import RefreshToken from '../models/token.model';
-import jwt from "jsonwebtoken";
 
 
 class UserController {
@@ -24,7 +22,7 @@ class UserController {
                 const refreshToken = isValid.refreshToken;
 
                 res.cookie("token", refreshToken);
-                res.status(200).json({ message: 'Login successful', accessToken });
+                res.status(200).json({ message: 'Login successful', accessToken, refreshToken });
 
             } else {
                 res.status(401).json({ message: 'Invalid credentials' });
@@ -39,16 +37,20 @@ class UserController {
 
         if (!refreshToken) {
             res.status(400).json({ message: 'Refresh token is required' });
+            return
         }
 
         try {
             const newAccessToken = await AuthService.refreshAccessTokenService(refreshToken);
+            
 
             if (!newAccessToken) {
                 res.status(403).json({ message: 'Invalid or expired refresh token' });
+                return
             }
 
-            res.json({ accessToken: newAccessToken });
+            res.status(201).json({ accessToken: newAccessToken });
+
         } catch (error) {
             res.status(500).json({ message: 'Server error', error });
         }

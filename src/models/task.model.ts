@@ -9,8 +9,7 @@ export interface ITask extends Document{
 const TaskSchema: Schema = new Schema({
     title: {
       type: String,
-      required: true,
-      unique: true,
+      required: true
     },
     complated: {
       type: Boolean,
@@ -18,7 +17,7 @@ const TaskSchema: Schema = new Schema({
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User' 
+      ref: 'User'
     }
 });
   
