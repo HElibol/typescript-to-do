@@ -12,7 +12,8 @@ class TaskService {
         }
 
         public async updateTask(taskId: string, updateData: Partial<ITask>):Promise<ITask|null>{
-            return await TaskModel.findByIdAndUpdate(taskId, updateData, { new: true });        }
+            return await TaskModel.findByIdAndUpdate(taskId, updateData, { new: true });        
+        }
 
         public async deleteTask(taskId: string): Promise<ITask | null> {
             return await TaskModel.findByIdAndDelete(taskId);

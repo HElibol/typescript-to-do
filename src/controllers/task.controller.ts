@@ -6,7 +6,8 @@ class TaskController {
     public async createTask(req: Request, res: Response):Promise<void>{
         try {
             const { title } = req.body;
-            const userId: string = "6703a6c50d8a58a57a872126";
+            const {userId} = req.user;
+
             const newTask: ITask = await TaskService.createTask({
                 title,
                 user: userId,
@@ -20,7 +21,7 @@ class TaskController {
     }
 
     public async getTaskByUserId(req: Request, res: Response):Promise<void>{
-        const userId = "6703a6c50d8a58a57a872126";
+        const {userId} = req.user;
         try {
             const tasks: ITask[] = await TaskService.getTaskByUserId(userId);
             res.status(200).json(tasks);
@@ -36,7 +37,7 @@ class TaskController {
         try{
             const taskId = req.params.id
             const {title, complated} = req.body;
-            const userId = req.user;
+            const {userId} = req.user;
             const taskData: ITask = {
                 title,
                 user: userId, 

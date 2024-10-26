@@ -4,9 +4,9 @@ import AuthService  from '../services/auth.service';
 
 class UserController {
     public async register(req: Request, res: Response):Promise<void> {
-        const { username, password } = req.body;
+        const { username, password, email } = req.body;
         try {
-            const newUser = await AuthService.register(username, password);
+            const newUser = await AuthService.register(username, password, email);
             res.status(201).json(newUser);
         } catch (error) {
             res.status(500).json({ message: 'User registration failed', error });
@@ -30,7 +30,24 @@ class UserController {
         } catch (error) {
             res.status(500).json({ message: 'Login failed', error });
         }
-    } 
+    }
+
+    public async logout(req: Request, res: Response): Promise<void>{
+        const {userId} = req.user;
+        try{
+            const isLogout = await AuthService.logout(userId);
+            if(!isLogout){
+                console.log(">>>>>>>>>",!isLogout);
+                res.status(400).json({message: 'Logout failed!!!'})
+            }
+
+            res.status(200).json({message: 'Logout successful'})
+
+        }catch(error){
+            res.status(400).json({error, message: 'Logout failed'})
+        }
+
+    }
             
     public async refreshAccessToken(req: Request, res: Response):Promise<void>{
         const refreshToken = req.body.refreshToken;
@@ -43,7 +60,6 @@ class UserController {
         try {
             const newAccessToken = await AuthService.refreshAccessTokenService(refreshToken);
             
-
             if (!newAccessToken) {
                 res.status(403).json({ message: 'Invalid or expired refresh token' });
                 return

@@ -4,8 +4,8 @@ import { generateAccessToken, generateRefreshToken } from '../utils/jwt.utils';
 import jwt from "jsonwebtoken";
 
 class AuthService  {
-    public async register(username: string, password: string): Promise<IUser> {
-      const newUser: IUser = { username, password } as IUser;
+    public async register(username: string, password: string, email: string): Promise<IUser> {
+      const newUser: IUser = { username, password, email } as IUser;
       const user = new UserModel(newUser);
       return await user.save();
     }
@@ -46,6 +46,16 @@ class AuthService  {
         return {accessToken, refreshToken};
     }
 
+    public async logout(user: string): Promise<boolean> {
+        try {
+            const deletedToken = await RefreshTokenModel.findOneAndDelete({ user: user });
+            return !!deletedToken;
+        } catch (error) {
+            console.error('Logout error:', error);
+            return false;
+        }
+    }
+
     public async refreshAccessTokenService(refreshToken: string): Promise<string | null>{
         try {
             const savedToken = await RefreshTokenModel.findOne({ token: refreshToken });
@@ -57,6 +67,7 @@ class AuthService  {
                 return null;
             }
            
+            // verify doğrudan bir promise dönmez. önüne await eklemk mümkün değil.
             return new Promise((resolve, reject) => {
                 jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!, (err: any, decoded: any) => {
                     if (err) {
