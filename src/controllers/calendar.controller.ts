@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import CalenderService from "../services/calendar.service";
+import calendarService from "../services/calendar.service";
 
 
 class CalendarController {
@@ -17,7 +18,7 @@ class CalendarController {
         }
     };
 
-    public async assignTaskToDays(req: Request, res: Response){
+    public async assignTaskToDays(req: Request, res: Response): Promise<void>{
         const { calendarId, dayId } = req.params;
         const { taskId } = req.body;
         const {userId} = req.user
@@ -35,6 +36,15 @@ class CalendarController {
 
 
     }
+
+    public async getCalendarByUserId(req: Request, res: Response): Promise<void>{
+
+        const {userId} = req.user;
+
+        const calendar = await calendarService.getCalender(userId);
+        
+        res.status(201).json(calendar)
+    } 
 
 }
 

@@ -43,9 +43,21 @@ class CalendarService{
             
             
             return calendar;
-        };
+    };
         
-    
+    public async getCalender(userId: Types.ObjectId): Promise<ICalendar>{
+
+        const calendar = await CalendarModel.findOne({user: userId}).populate({
+            path: "days.tasks",
+            model: "Task"
+        })
+
+        if(!calendar){
+            throw new Error("Calendar not found or unauthorized!!")
+        }
+        
+        return calendar;
+    }
 
 }
 

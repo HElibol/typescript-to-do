@@ -6,5 +6,6 @@ const router = Router();
 
 router.post('/', authMiddleware, calendarController.createCalendar);
 router.put('/:calendarId/days/:dayId/assign-task', authMiddleware, calendarController.assignTaskToDays);
+router.get('/', authMiddleware, calendarController.getCalendarByUserId);
 
 export default router;
