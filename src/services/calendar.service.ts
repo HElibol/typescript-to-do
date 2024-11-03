@@ -23,10 +23,8 @@ class CalendarService{
         dayId: string,
         taskId: string,
         userId: Types.ObjectId): Promise<ICalendar>{
-            console.log("calende:::::.",calendarId,"  date:::",dayId,"  taskId::::",taskId,"  userId:::::",userId);
 
             const task = await TaskModel.findOne({ _id: taskId });
-            console.log("...................",)
             if (!task) throw new Error("Task not found or unauthorized");
             
             const calendar = await CalendarModel.findOneAndUpdate(
@@ -40,7 +38,6 @@ class CalendarService{
             if(!calendar){
                 throw new Error("Calendar not found or unauthorized NULLL!")
             }
-            
             
             return calendar;
     };

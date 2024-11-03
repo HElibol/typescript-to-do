@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import usersRouter from './user.routes';
+import usersRouter from './auth.routes';
 import taskRouter from './task.routes';
 import calenderRouter from './calendar.routes';
 

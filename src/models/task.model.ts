@@ -9,7 +9,8 @@ export interface ITask extends Document{
 const TaskSchema: Schema = new Schema({
     title: {
       type: String,
-      required: true
+      required: true,
+      unique: false
     },
     complated: {
       type: Boolean,
