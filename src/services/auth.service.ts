@@ -31,6 +31,8 @@ class AuthService  {
 
         const refreshToken = generateRefreshToken(user._id);
         const accessToken = generateAccessToken(user._id);
+        const accessTokenExpiresIn = process.env.ACCESS_TOKEN_EXPIRES_IN; // 15 minutes
+        const refreshTokenExpiresIn = process.env.REFRESH_TOKEN_EXPIRES_IN; // 7 days
 
         const expiresAt = new Date();
         expiresAt.setDate(expiresAt.getDate() + 7); 
@@ -42,8 +44,10 @@ class AuthService  {
         });
     
         await refreshTokenM.save();   
+
         
-        return {accessToken, refreshToken};
+        
+        return {accessToken, refreshToken, accessTokenExpiresIn, refreshTokenExpiresIn, user};
     }
 
     public async logout(user: string): Promise<boolean> {
