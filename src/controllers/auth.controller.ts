@@ -25,7 +25,7 @@ class UserController {
                 const user = isValid.user;
 
                 res.cookie("token", refreshToken);
-                res.status(200).json({ message: 'Login successful', accessToken, refreshToken, user });
+                res.status(200).json({ message: 'Login successful', accessToken, refreshToken, user, accessTokenExpiresIn, refreshTokenExpiresIn });    
 
             } else {
                 res.status(401).json({ message: 'Invalid credentials' });
