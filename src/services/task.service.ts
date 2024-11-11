@@ -18,7 +18,7 @@ class TaskService {
         public async deleteTask(taskId: string): Promise<ITask | null> {
             return await TaskModel.findByIdAndDelete(taskId);
         }
-        
+
 }
 
 export default new TaskService();

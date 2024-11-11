@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import CalenderService from "../services/calendar.service";
-import calendarService from "../services/calendar.service";
+import CalendarService from "../services/calendar.service";
 
 
 class CalendarController {
@@ -11,7 +10,7 @@ class CalendarController {
     
         try {
             console.log(userId)
-            const newCalendar = await CalenderService.createCalendar(userId, new Date(startDate), new Date(endDate));
+            const newCalendar = await CalendarService.createCalendar(userId, new Date(startDate), new Date(endDate));
             res.status(201).json(newCalendar);
         } catch (error) {
             res.status(500).json({ error: "Calendar could not be created." });
@@ -24,7 +23,7 @@ class CalendarController {
         const {userId} = req.user
 
         try {
-            const updatedCalendar = await CalenderService.assignTaskToDays(calendarId, dayId, taskId, userId);
+            const updatedCalendar = await CalendarService.assignTaskToDays(calendarId, dayId, taskId, userId);
             if (updatedCalendar) {
                 res.status(200).json(updatedCalendar);
             } else {
@@ -37,11 +36,27 @@ class CalendarController {
 
     }
 
+    public async removeTaskFromDay(req: Request, res: Response): Promise<void> {
+        const { calendarId, dayId, taskId } = req.params;
+        const { userId } = req.user;
+
+        try {
+            const updatedCalendar = await CalendarService.removeTaskFromDay(calendarId, dayId, taskId, userId);
+            if (updatedCalendar) {
+                res.status(200).json(updatedCalendar);
+            } else {
+                res.status(404).json({ error: "Calendar or date not found." });
+            }
+        } catch (error) {
+            res.status(500).json({ error: "Task could not be removed from the calendar day." });
+        }
+    }
+
     public async getCalendarByUserId(req: Request, res: Response): Promise<void>{
 
         const {userId} = req.user;
 
-        const calendar = await calendarService.getCalender(userId);
+        const calendar = await CalendarService.getCalender(userId);
         
         res.status(201).json(calendar)
     } 

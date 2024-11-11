@@ -33,7 +33,6 @@ class CalendarService{
                 { new: true }
             );
 
-            console.log(calendar)
 
             if(!calendar){
                 throw new Error("Calendar not found or unauthorized NULLL!")
@@ -41,20 +40,48 @@ class CalendarService{
             
             return calendar;
     };
+
+    public async removeTaskFromDay(
+        calendarId: string,
+        dayId: string,
+        taskId: string,
+        userId: Types.ObjectId
+    ): Promise<ICalendar> {
+        const task = await TaskModel.findOne({ _id: taskId });
+        if (!task) throw new Error("Task not found or unauthorized");
+
+        const calendar = await CalendarModel.findOneAndUpdate(
+            { _id: new Types.ObjectId(calendarId), "days._id": new Types.ObjectId(dayId), user: new Types.ObjectId(userId) },
+            { $pull: { "days.$.tasks": taskId } },
+            { new: true }
+        );
+
+        if (!calendar) {
+            throw new Error("Calendar not found or unauthorized!");
+        }
+
+        return calendar;
+    }
         
     public async getCalender(userId: Types.ObjectId): Promise<ICalendar>{
 
-        const calendar = await CalendarModel.findOne({user: userId}).populate({
-            path: "days.tasks",
-            model: "Task"
-        })
+        try{
+            const calendar = await CalendarModel.findOne({user: userId}).populate({
+                path: "days.tasks",
+                model: "Task"
+            })
+    
+            if(!calendar){
+                throw new Error("Calendar not found or unauthorized!!")
+            }
+            
+            return calendar;
+        }catch{
+            throw new Error("An error occurred while retrieving the calendar.");
 
-        if(!calendar){
-            throw new Error("Calendar not found or unauthorized!!")
         }
-        
-        return calendar;
-    }
+
+    };
 
 }
 
